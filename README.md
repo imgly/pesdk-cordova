@@ -1,1 +1,1 @@
-# cordova-plugin-pesdk
+# pesdk-cordova
