@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-photoeditorsdk" version="1.0.0">
+    <name>PhotoEditorSDK</name>
+    <description>A Cordova plugin for PhotoEditor SDK. Integrate the photo editor into your own HTML5, iOS or Android app - in minutes!</description>
+    <license>MIT</license>
+    <keywords>ecosystem:cordova,cordova-android,cordova-ios,cordova,image,image editor,imageeditor,photo,photo editor,photoeditor,photoeditorsdk,PhotoEditor SDK,SDK,ios,android</keywords>
+    <repo>https://github.com/imgly/pesdk-cordova.git</repo>
+    <author>img.ly GmbH,contact@img.ly</author>
+    <engines>
+        <engine name="cordova-ios" version=">=4.3.0"/>
+    </engines>
+
+    <js-module src="www/photoeditorsdk.js" name="PESDK">
+        <clobbers target="PESDK"/>
+    </js-module>
+
+    <!-- Android -->
+    <platform name="android">
+        <config-file target="config.xml" parent="/*">
+            <feature name="PESDK">
+                <param name="android-package" value="com.photoeditorsdk.cordova.PESDKPlugin"/>
+                <param name="onload" value="true"/>
+            </feature>
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <provider xmlns:tools="http://schemas.android.com/tools" android:authorities="${applicationId}.IMGLYAutoInit" android:enabled="false" android:exported="false" android:name="ly.img.android.IMGLYAutoInit" tools:replace="android:enabled"/>
+        </config-file>
+
+        <!-- Add repositories to root build.gradle -->
+        <hook type="before_prepare" src="hooks/repositories-gradle-hook.js"/>
+        <!-- Add dependencies to root build.gradle -->
+        <hook type="before_prepare" src="hooks/dependencies-gradle-hook.js"/>
+        <!-- If the user deleted `imglyConfig.gradle` it will be recreated -->
+        <hook type="before_prepare" src="hooks/imglyConfig-gradle-hook.js"/>
+        <!-- Remove the configuration from app/build.gradle -->
+        <hook type="before_prepare" src="hooks/remove-copy-imglyConfig-gradle-hook.js"/>
+        <!-- Copy the configuration form `imglyConfig.gradle` to app/build.gradle -->
+        <hook type="before_prepare" src="hooks/copy-imglyConfig-gradle-hook.js"/>
+
+        <hook type="before_plugin_install" src="hooks/imglyConfig-gradle-hook.js"/> <!-- Create `imglyConfig.gradle file after add the plugin to Cordova app -->
+
+        <hook type="before_plugin_rm" src="hooks/remove-dependencies-gradle-hook.js"/>
+        <hook type="before_plugin_rm" src="hooks/remove-repositories-gradle-hook.js"/>
+        <hook type="before_plugin_rm" src="hooks/remove-imglyConfig-gradle-hook.js"/>
+        <hook type="before_plugin_rm" src="hooks/remove-copy-imglyConfig-gradle-hook.js"/>
+
+        <framework src="src/android/build.gradle" custom="true" type="gradleReference"/>
+        <source-file src="src/android/PESDKPlugin.kt" target-dir="java/com/photoeditorsdk/cordova"/>
+    </platform>
+
+    <!-- iOS -->
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="PESDK">
+                <param name="ios-package" value="PESDKPlugin"/>
+            </feature>
+        </config-file>
+
+        <header-file src="src/ios/PESDKPlugin.h"/>
+        <source-file src="src/ios/PESDKPlugin.m"/>
+
+        <podspec>
+            <config>
+                <source url="https://github.com/CocoaPods/Specs.git"/>
+            </config>
+            <pods use-frameworks="true">
+                <pod name="PhotoEditorSDK" spec="~> 10.19"/>
+            </pods>
+        </podspec>
+    </platform>
+
+</plugin>

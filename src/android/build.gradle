@@ -1,0 +1,70 @@
+def safeExtGet(prop, fallback) {
+    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+
+// Apply the PESDKPlugin.
+// [!] This assumes you made the correct changes to your projects build.gradle file!
+//     See https://docs.photoeditorsdk.com/guides/android/v7/introduction/getting_started for details.
+apply plugin: 'ly.img.android.sdk'
+apply plugin: 'kotlin-android'
+
+// Configure the PESDKPlugin
+imglyConfig {
+    pesdk {
+        enabled true
+    }
+
+    useInheritanceDependencies true
+
+    modules {
+        include 'ui:core'
+        include 'backend:config-loader'
+    }
+}
+
+def MIN_LY_IMG_ANDROID_SDK_PLUGIN_VERSION = "7.6.0"
+
+task checkVersion {
+    if (imglyConfig.convertToVersionNumber(imglyConfig.getVersion()) < imglyConfig.convertToVersionNumber(MIN_LY_IMG_ANDROID_SDK_PLUGIN_VERSION)) {
+        String WRONG_VERSION = "" +
+            "┌───────────────────────────────────────────────────────────────────────┐\n"+
+            "│ PhotoEditor SDK update required!                                      │\n"+
+            "│ Please update the plugin version in your 'android/build.gradle' file. │\n"+
+            "│ Minimum required dependency: 'ly.img.android.sdk:plugin:${MIN_LY_IMG_ANDROID_SDK_PLUGIN_VERSION}'       │\n"+
+            "│ Your are currently using:    'ly.img.android.sdk:plugin:${imglyConfig.getVersion()}'       │\n"+
+            "└───────────────────────────────────────────────────────────────────────┘\n"
+
+        throw new GradleScriptException(WRONG_VERSION, new IllegalArgumentException(WRONG_VERSION))
+    }
+}
+
+preBuild.dependsOn checkVersion
+
+android {
+    compileSdkVersion safeExtGet('compileSdkVersion', 29)
+    buildToolsVersion safeExtGet('buildToolsVersion', '29.0.2')
+
+    defaultConfig {
+        minSdkVersion safeExtGet('minSdkVersion', 19)
+        targetSdkVersion safeExtGet('targetSdkVersion', 29)
+        versionCode 1
+        versionName "1.0"
+    }
+    lintOptions {
+        abortOnError false
+    }
+    buildTypes {
+        all {
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    api 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.61'
+    compileOnly "ly.img.android.sdk:serializer:$imglyConfig.version"
+    implementation 'com.google.code.gson:gson:2.8.5'
+}
