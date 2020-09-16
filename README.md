@@ -22,6 +22,9 @@ cordova plugin add cordova-plugin-photoeditorsdk
 
 ### Android
 
+**Configuration for Android:**
+Configure PhotoEditor SDK for Android by opening `imglyConfig.gradle`, you can comment out the modules you don't need to save size.
+
 Because PhotoEditor SDK for Android is quite large, there is a high chance that you will need to enable [Multidex](https://developer.android.com/studio/build/multidex) for your project as follows:
 
 ```sh

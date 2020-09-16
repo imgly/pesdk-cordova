@@ -41,14 +41,17 @@ imglyConfig {
   return new Promise((resolve, reject) => {
     const projectRoot = path.join(context.opts.projectRoot);
     var gradleConfigFile = path.join(projectRoot, "imglyConfig.gradle");
-
-    try {
-      fs.writeFileSync(gradleConfigFile, imglyConfig);
-      console.log("Add imglyConfig.gradle to the root directory.");
+    if (fs.existsSync(gradleConfigFile)) {
       resolve();
-    } catch (err) {
-      console.error(err);
-      reject();
+    } else {
+      try {
+        fs.writeFileSync(gradleConfigFile, imglyConfig);
+        console.log("Add imglyConfig.gradle to the root directory.");
+        resolve();
+      } catch (err) {
+        console.error(err);
+        reject();
+      }
     }
   });
 };
