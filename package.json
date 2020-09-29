@@ -18,8 +18,8 @@
         "name": "img.ly GmbH",
         "email": "contact@img.ly"
     },
-    "license": "MIT",
-    "licenseFilename": "LICENSE",
+    "license": "BSD-3-Clause",
+    "licenseFilename": "LICENSE.md",
     "readmeFilename": "README.md",
     "cordova": {
         "id": "cordova-plugin-photoeditorsdk",
