@@ -60,7 +60,7 @@ extern const struct CDV_IMGLY_Constants {
 
 @end
 
-@interface CDVConvert
+@interface CDVConvert : NSObject
 
 typedef NSURL CDV_IMGLY_ExportURL;
 typedef NSURL CDV_IMGLY_ExportFileURL;
