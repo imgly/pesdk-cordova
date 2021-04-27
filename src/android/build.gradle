@@ -22,7 +22,7 @@ imglyConfig {
     }
 }
 
-def MIN_LY_IMG_ANDROID_SDK_PLUGIN_VERSION = "7.6.0"
+def MIN_LY_IMG_ANDROID_SDK_PLUGIN_VERSION = "7.6.6"
 
 task checkVersion {
     if (imglyConfig.convertToVersionNumber(imglyConfig.getVersion()) < imglyConfig.convertToVersionNumber(MIN_LY_IMG_ANDROID_SDK_PLUGIN_VERSION)) {
@@ -47,8 +47,6 @@ android {
     defaultConfig {
         minSdkVersion safeExtGet('minSdkVersion', 19)
         targetSdkVersion safeExtGet('targetSdkVersion', 29)
-        versionCode 1
-        versionName "1.0"
     }
     lintOptions {
         abortOnError false

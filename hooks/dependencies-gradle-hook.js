@@ -13,7 +13,7 @@ module.exports = (context) => {
     BLOCK_START +
     `
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.61"
-        classpath "ly.img.android.sdk:plugin:7.6.0"` +
+        classpath "ly.img.android.sdk:plugin:7.6.6"` +
     "\n" +
     BLOCK_END +
     "\n";

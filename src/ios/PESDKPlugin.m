@@ -3,6 +3,16 @@
 #import <objc/message.h>
 @import PhotoEditorSDK;
 
+@interface NSDictionary (CDV_IMGLY_Category)
+
+- (nullable id)pesdk_getValueForKeyPath:(nonnull NSString *)keyPath
+                          default:(nullable id)defaultValue;
++ (nullable id)pesdk_getValue:(nullable NSDictionary *)dictionary
+        valueForKeyPath:(nonnull NSString *)keyPath
+                default:(nullable id)defaultValue;
+
+@end
+
 @interface PESDKPlugin () <PESDKPhotoEditViewControllerDelegate>
 @property(strong) CDVInvokedUrlCommand *lastCommand;
 @end
@@ -207,28 +217,28 @@ const struct CDV_IMGLY_Constants CDV_IMGLY = {
     };
 
     // Set default values if necessary
-    id valueExportType = [NSDictionary getValue:withConfiguration
+    id valueExportType = [NSDictionary pesdk_getValue:withConfiguration
                                 valueForKeyPath:@"export.type"
                                         default:CDV_IMGLY.kExportTypeFileURL];
     id valueExportFile = [NSDictionary
-               getValue:withConfiguration
+               pesdk_getValue:withConfiguration
         valueForKeyPath:@"export.filename"
                 default:[NSString stringWithFormat:@"imgly-export/%@",
                                                    [[NSUUID UUID] UUIDString]]];
     id valueSerializationEnabled =
-        [NSDictionary getValue:withConfiguration
+        [NSDictionary pesdk_getValue:withConfiguration
                valueForKeyPath:@"export.serialization.enabled"
                        default:@(NO)];
     id valueSerializationType =
-        [NSDictionary getValue:withConfiguration
+        [NSDictionary pesdk_getValue:withConfiguration
                valueForKeyPath:@"export.serialization.exportType"
                        default:CDV_IMGLY.kExportTypeFileURL];
     id valueSerializationFile =
-        [NSDictionary getValue:withConfiguration
+        [NSDictionary pesdk_getValue:withConfiguration
                valueForKeyPath:@"export.serialization.filename"
                        default:valueExportFile];
     id valueSerializationEmbedImage =
-        [NSDictionary getValue:withConfiguration
+        [NSDictionary pesdk_getValue:withConfiguration
                valueForKeyPath:@"export.serialization.embedSourceImage"
                        default:@(NO)];
 
@@ -484,14 +494,13 @@ const struct CDV_IMGLY_Constants CDV_IMGLY = {
 }
 @end
 
-@implementation NSDictionary (RN_IMGLY_Category)
+@implementation NSDictionary (CDV_IMGLY_Category)
 
 //// start extract value from path
-- (nullable id)getValueForKeyPath:(nullable NSDictionary *)dictionary
-                  valueForKeyPath:(nonnull NSString *)keyPath
+- (nullable id)pesdk_getValueForKeyPath:(nonnull NSString *)keyPath
                           default:(nullable id)defaultValue {
 
-  id value = [dictionary valueForKeyPath:keyPath];
+  id value = [self valueForKeyPath:keyPath];
   if (value == nil || value == [NSNull null]) {
     return defaultValue;
   } else {
@@ -499,14 +508,13 @@ const struct CDV_IMGLY_Constants CDV_IMGLY = {
   }
 }
 
-+ (nullable id)getValue:(nullable NSDictionary *)dictionary
++ (nullable id)pesdk_getValue:(nullable NSDictionary *)dictionary
         valueForKeyPath:(nonnull NSString *)keyPath
                 default:(nullable id)defaultValue {
   if (dictionary == nil) {
     return defaultValue;
   }
-  return [dictionary getValueForKeyPath:dictionary
-                        valueForKeyPath:keyPath
+  return [dictionary pesdk_getValueForKeyPath:keyPath
                                 default:defaultValue];
 }
 //// end extract value from path
