@@ -908,6 +908,7 @@ export interface Configuration {
       filename?: string | null;
       /**
        * Whether the serialization data should include the original input image data.
+       * @note This is only supported on iOS.
        * @example // Defaults to:
        * false
        */

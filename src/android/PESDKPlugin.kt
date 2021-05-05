@@ -13,8 +13,9 @@ import ly.img.android.PESDK
 import ly.img.android.pesdk.PhotoEditorSettingsList
 import ly.img.android.pesdk.backend.model.EditorSDKResult
 import ly.img.android.pesdk.backend.model.state.LoadSettings
-import ly.img.android.pesdk.backend.model.state.SaveSettings
 import ly.img.android.pesdk.backend.model.state.manager.SettingsList
+import ly.img.android.pesdk.backend.model.constant.OutputMode
+import ly.img.android.pesdk.backend.encoder.Encoder
 import ly.img.android.pesdk.kotlin_extension.continueWithExceptions
 import ly.img.android.pesdk.ui.activity.EditorBuilder
 import ly.img.android.pesdk.ui.activity.ImgLyIntent
@@ -22,8 +23,8 @@ import ly.img.android.pesdk.utils.MainThreadRunnable
 import ly.img.android.pesdk.utils.SequenceRunnable
 import ly.img.android.pesdk.utils.UriHelper
 import ly.img.android.sdk.config.*
-import ly.img.android.serializer._3._0._0.PESDKFileReader
-import ly.img.android.serializer._3._0._0.PESDKFileWriter
+import ly.img.android.serializer._3.IMGLYFileReader
+import ly.img.android.serializer._3.IMGLYFileWriter
 import org.apache.cordova.CallbackContext
 import org.apache.cordova.CordovaPlugin
 import org.json.JSONArray
@@ -95,19 +96,19 @@ class PESDKPlugin : CordovaPlugin() {
         settingsList.configure<LoadSettings> { loadSettings ->
             filepath?.also {
                 if (it.startsWith("data:")) {
-                    loadSettings.setSource(UriHelper.createFromBase64String(it.substringAfter("base64,")), deleteProtectedSource = false)
+                    loadSettings.source = UriHelper.createFromBase64String(it.substringAfter("base64,"))
                 } else {
                     val potentialFile = continueWithExceptions { File(it) }
                     if (potentialFile?.exists() == true) {
-                        loadSettings.setSource(Uri.fromFile(potentialFile), deleteProtectedSource = true)
+                        loadSettings.source = Uri.fromFile(potentialFile)
                     } else {
-                        loadSettings.setSource(ConfigLoader.parseUri(it), deleteProtectedSource = true)
+                        loadSettings.source = ConfigLoader.parseUri(it)
                     }
                 }
             }
-        }.configure<SaveSettings> {
-            it.savePolicy = SaveSettings.SavePolicy.KEEP_SOURCE_AND_CREATE_ALWAYS_OUTPUT
         }
+
+        val currentActivity = mainActivity ?: throw RuntimeException("Can't start the Editor because there is no current activity")
 
         readSerialisation(settingsList, serialization, filepath == null)
 
@@ -116,9 +117,9 @@ class PESDKPlugin : CordovaPlugin() {
         cordova.setActivityResultCallback(self)
 
         MainThreadRunnable {
-            EditorBuilder(mainActivity)
+            EditorBuilder(currentActivity)
               .setSettingsList(settingsList)
-              .startActivityForResult(mainActivity, EDITOR_RESULT_ID)
+              .startActivityForResult(currentActivity, EDITOR_RESULT_ID)
         }()
     }
 
@@ -139,9 +140,10 @@ class PESDKPlugin : CordovaPlugin() {
         }
     }
 
-    private fun success(intent: Intent) {
+    private fun success(intent: Intent?) {
+
+        intent ?: return // If resultData is null the result is not from us.
         val data = EditorSDKResult(intent)        
-        data.notifyGallery(EditorSDKResult.UPDATE_RESULT and EditorSDKResult.UPDATE_SOURCE)
 
         SequenceRunnable("Export Done") {
             val sourcePath = data.sourceUri
@@ -158,13 +160,16 @@ class PESDKPlugin : CordovaPlugin() {
                         }
                         when (serializationConfig.exportType) {
                             SerializationExportType.FILE_URL -> {
-                                val file = serializationConfig.filename?.let { Export.convertPathToFile(it) }
-                                  ?: File.createTempFile("serialization", ".json")
-                                PESDKFileWriter(settingsList).writeJson(file)
-                                file.absolutePath
+                                val uri = serializationConfig.filename?.let { 
+                                    Uri.parse(it)
+                                } ?: Uri.fromFile(File.createTempFile("serialization", ".json"))
+                                Encoder.createOutputStream(uri).use { outputStream -> 
+                                    IMGLYFileWriter(settingsList).writeJson(outputStream);
+                                }
+                                uri.toString()
                             }
                             SerializationExportType.OBJECT -> {
-                                PESDKFileWriter(settingsList).writeJsonAsString()
+                                IMGLYFileWriter(settingsList).writeJsonAsString()
                             }
                         }
                     }
@@ -184,7 +189,7 @@ class PESDKPlugin : CordovaPlugin() {
     private fun readSerialisation(settingsList: SettingsList, serialization: String?, readImage: Boolean) {
         if (serialization != null) {
             skipIfNotExists {
-                PESDKFileReader(settingsList).also {
+                IMGLYFileReader(settingsList).also {
                     it.readJson(serialization, readImage)
                 }
             }

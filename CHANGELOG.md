@@ -1,3 +1,14 @@
+## [2.0.0]
+
+### Changed
+
+* Improved API documentation.
+* Deprecated `PESDK.loadResource` - use `PESDK.resolveStaticResource` instead.
+* Updated minimum `cordova` version to 9.0.0.
+* [Android] Updated native SDK to version 8.
+* [Android] Updated minimum `cordova-android` version to 9.0.0.
+* [iOS] Updated minimum `cordova-ios` version to 5.0.1.
+
 ## [1.1.0]
 
 ### Changed

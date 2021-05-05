@@ -49,7 +49,7 @@ Open the editor with an image:
 PESDK.openEditor(
   successCallback,
   failureCallback,
-  PESDK.loadResource('www/assets/image.jpg')
+  PESDK.resolveStaticResource('www/assets/image.jpg')
 );
 ```
 

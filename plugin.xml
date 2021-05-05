@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-photoeditorsdk" version="1.1.0">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-photoeditorsdk" version="2.0.0">
     <name>PhotoEditorSDK</name>
     <description>A Cordova plugin for PhotoEditor SDK. Integrate the photo editor into your own HTML5, iOS or Android app - in minutes!</description>
-    <license>MIT</license>
-    <keywords>ecosystem:cordova,cordova-android,cordova-ios,cordova,image,image editor,imageeditor,photo,photo editor,photoeditor,photoeditorsdk,PhotoEditor SDK,SDK,ios,android</keywords>
+    <license>BSD-3-Clause</license>
+    <keywords>cordova,cordova-android,cordova-ios,image,image editor,imageeditor,photo,photo editor,photoeditor,photoeditorsdk,PhotoEditor SDK,SDK,ios,android</keywords>
     <repo>https://github.com/imgly/pesdk-cordova.git</repo>
-    <author>img.ly GmbH,contact@img.ly</author>
+    <author>img.ly GmbH, contact@img.ly</author>
+
     <engines>
-        <engine name="cordova-ios" version=">=4.3.0"/>
+        <engine name="cordova" version=">=9.0.0"/>
+        <engine name="cordova-ios" version=">5.0.0"/>
+        <engine name="cordova-android" version=">=9.0.0"/>
     </engines>
 
     <js-module src="www/photoeditorsdk.js" name="PESDK">

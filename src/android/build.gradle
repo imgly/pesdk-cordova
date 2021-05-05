@@ -22,7 +22,7 @@ imglyConfig {
     }
 }
 
-def MIN_LY_IMG_ANDROID_SDK_PLUGIN_VERSION = "7.6.6"
+def MIN_LY_IMG_ANDROID_SDK_PLUGIN_VERSION = "8.1.3"
 
 task checkVersion {
     if (imglyConfig.convertToVersionNumber(imglyConfig.getVersion()) < imglyConfig.convertToVersionNumber(MIN_LY_IMG_ANDROID_SDK_PLUGIN_VERSION)) {
@@ -62,7 +62,7 @@ repositories {
 }
 
 dependencies {
-    api 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.61'
+    api 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.10'
     compileOnly "ly.img.android.sdk:serializer:$imglyConfig.version"
     implementation 'com.google.code.gson:gson:2.8.5'
 }

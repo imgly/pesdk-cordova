@@ -1,14 +1,36 @@
 {
     "name": "cordova-plugin-photoeditorsdk",
-    "title": "Cordova plugin for PhotoEditor SDK",
-    "version": "1.1.0",
-    "types": "./types/index.d.ts",
-    "cordova_name": "cordova-plugin-photoeditorsdk",
     "description": "A Cordova plugin for PhotoEditor SDK. Integrate the photo editor into your own HTML5, iOS or Android app - in minutes!",
+    "version": "2.0.0",
+    "types": "./types/index.d.ts",
     "main": "www/photoeditorsdk.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
+    "cordova": {
+        "id": "cordova-plugin-photoeditorsdk",
+        "platforms": [
+            "android",
+            "ios"
+        ]
+    },
+    "keywords": [
+        "cordova",
+        "photoeditorsdk",
+        "ecosystem:cordova",
+        "cordova-android",
+        "cordova-ios",
+        "image",
+        "image editor",
+        "imageeditor",
+        "photo",
+        "photo editor",
+        "photoeditor",
+        "PhotoEditor SDK",
+        "SDK",
+        "ios",
+        "android"
+    ],
     "repository": {
         "type": "git",
         "url": "https://github.com/imgly/pesdk-cordova.git"
@@ -19,39 +41,18 @@
         "email": "contact@img.ly"
     },
     "license": "BSD-3-Clause",
-    "licenseFilename": "LICENSE.md",
-    "readmeFilename": "README.md",
-    "cordova": {
-        "id": "cordova-plugin-photoeditorsdk",
-        "platforms": [
-            "android",
-            "ios"
-        ]
-    },
     "engines": {
         "cordovaDependencies": {
             "1.0.0": {
                 "cordova-ios": ">4.3.0"
+            },
+            "2.0.0": {
+                "cordova": ">=9.0.0",
+                "cordova-ios": ">5.0.0",
+                "cordova-android": ">=9.0.0"
             }
         }
     },
-    "keywords": [
-        "ecosystem:cordova",
-        "cordova-android",
-        "cordova-ios",
-        "cordova",
-        "image",
-        "image editor",
-        "imageeditor",
-        "photo",
-        "photo editor",
-        "photoeditor",
-        "photoeditorsdk",
-        "PhotoEditor SDK",
-        "SDK",
-        "ios",
-        "android"
-    ],
     "dependencies": {
         "async": "^3.2.0"
     }
