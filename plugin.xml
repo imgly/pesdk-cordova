@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-photoeditorsdk" version="2.0.0">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-photoeditorsdk" version="2.1.0">
     <name>PhotoEditorSDK</name>
     <description>A Cordova plugin for PhotoEditor SDK. Integrate the photo editor into your own HTML5, iOS or Android app - in minutes!</description>
     <license>BSD-3-Clause</license>
@@ -68,7 +68,7 @@
                 <source url="https://github.com/CocoaPods/Specs.git"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="PhotoEditorSDK" spec="~> 10.22"/>
+                <pod name="PhotoEditorSDK" spec="~> 10.24"/>
             </pods>
         </podspec>
     </platform>

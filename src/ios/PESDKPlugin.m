@@ -163,10 +163,7 @@ const struct CDV_IMGLY_Constants CDV_IMGLY = {
       }
 
       PESDKPhotoEditViewController *photoEditViewController =
-          [[PESDKPhotoEditViewController alloc]
-              initWithPhotoAsset:photoAsset
-                   configuration:configuration
-                  photoEditModel:photoEditModel];
+            [PESDKPhotoEditViewController photoEditViewControllerWithPhotoAsset:photoAsset configuration:configuration photoEditModel:photoEditModel];
       photoEditViewController.modalPresentationStyle =
           UIModalPresentationFullScreen;
       photoEditViewController.delegate = self;
@@ -218,7 +215,7 @@ const struct CDV_IMGLY_Constants CDV_IMGLY = {
 
     // Set default values if necessary
     id valueExportType = [NSDictionary pesdk_getValue:withConfiguration
-                                valueForKeyPath:@"export.type"
+                                valueForKeyPath:@"export.image.exportType"
                                         default:CDV_IMGLY.kExportTypeFileURL];
     id valueExportFile = [NSDictionary
                pesdk_getValue:withConfiguration

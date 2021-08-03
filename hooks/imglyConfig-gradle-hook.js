@@ -20,6 +20,9 @@ imglyConfig {
         include 'ui:adjustment'
         include 'ui:text-design'
         include 'ui:video-trim' // for VideoEditor
+        include 'ui:video-composition' // for VideoEditor
+        include 'ui:video-library' // for VideoEditor
+        include 'ui:audio-composition' // for VideoEditor
 
         // This module is big, remove the serializer if you don't need that feature.
         include 'backend:serializer'

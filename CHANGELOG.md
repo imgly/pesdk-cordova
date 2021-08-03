@@ -1,3 +1,10 @@
+## [2.1.0]
+
+### Fixed
+
+* [iOS] Fixed `export.image.exportType` configuration option.
+* [Android] Fixed compiling issues with `compileSdkVersion` 30. 
+
 ## [2.0.0]
 
 ### Changed

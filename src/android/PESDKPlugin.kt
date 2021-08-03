@@ -142,8 +142,11 @@ class PESDKPlugin : CordovaPlugin() {
 
     private fun success(intent: Intent?) {
 
-        intent ?: return // If resultData is null the result is not from us.
-        val data = EditorSDKResult(intent)        
+        val data = try {
+            intent?.let { EditorSDKResult(it) }
+        } catch (e: EditorSDKResult.NotAnImglyResultException) {
+            null
+        } ?: return // If data is null the result is not from us.
 
         SequenceRunnable("Export Done") {
             val sourcePath = data.sourceUri
