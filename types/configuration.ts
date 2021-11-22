@@ -965,6 +965,14 @@ export interface Configuration {
      * null
      */
     filename?: string | null;
+    /** 
+     * If enabled, the photo/video will be rendered and exported in the defined output format
+     * even if no changes have been applied. Otherwise, the input asset will be passed 
+     * through and might not match the defined output format.
+     * @example // Defaults to:
+     * false
+     */
+    force?: boolean;
     /**
      * Export configuration of the serialized image and video editing operations that were applied to
      * the input media loaded into the editor. This also allows to recover these operations the next

@@ -1,3 +1,17 @@
+## [2.2.0]
+
+### Added
+
+* Added `configuration.export.force` which will force the photo to be rendered and exported in the defined output format even if no changes have been applied. Otherwise, the input asset will be passed through and might not match the defined output format.
+
+### Fixed
+
+* [iOS] Fixed issue where the plugin result would not be sent.
+
+### Changed
+
+* [Android] Removed `WRITE_EXTERNAL_STORAGE` permission request when opening the editor.
+
 ## [2.1.0]
 
 ### Fixed
