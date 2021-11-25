@@ -207,6 +207,29 @@ export interface Configuration {
     canvasActions?: Array<
       CanvasAction.PLAY_PAUSE
     >;
+    /**
+     * Enforces a minimum allowed duration in seconds for the edited video for the trim and composition tool.
+     * The minimum allowed value is 0.5 seconds. See `forceMode` for additional options.
+     * @example // Defaults to:
+     * 0.5
+     */
+    minimumDuration?: number;
+    /**
+     * Enforces a maximum allowed duration in seconds for the edited video for the trim and composition tool
+     * if set to a value different from `null`. See `forceMode` for additional options.
+     * @example // Defaults to:
+     * null
+     */
+    maximumDuration?: number;
+    /**
+     * With the force trim option, you're able to enforce a `minimumDuration` and `maximumDuration` for a video composition
+     * in the composition tool and/or a single video in the trim tool. Thus users will not be able to export videos,
+     * which are not within the defined video duration limits. This feature is implemented as part of the user interface only.
+     * To be able to use this feature your subscription must include the trim feature.
+     * @example // Defaults to:
+     * ForceTrimMode.SILENT
+     */
+    forceMode?: ForceTrimMode;
   }
 
   /**
@@ -686,6 +709,14 @@ export interface Configuration {
      * [1, 1, 1, 1]
      */
     defaultTextColor?: Color;
+    /**
+     * Whether the user can use emojis as text input.
+     * @note Emojis are not cross-platform compatible. If you use the serialization feature to share edits
+     * across different platforms emojis will be rendered with the system's local set of emojis and will appear differently.
+     * @example // Defaults to:
+     * false
+     */
+    allowEmojis?: boolean;
   }
 
   /**
@@ -1129,6 +1160,39 @@ export enum FocusTool {
   MIRRORED = "mirrored",
   LINEAR = "linear",
   GAUSSIAN = "gaussian",
+}
+
+/** A force trim mode. */
+export enum ForceTrimMode {
+  /**
+   * Will always automatically present the composition tool or the trim tool
+   * after opening the editor and force your users to change the length of the video(s).
+   *
+   * The composition tool will only be used if it is included in your subscription and if it is included in `tools`
+   * or if both the composition and trim tool are not included in `tools`.
+   * Otherwise, the trim tool is used if it is included in your subscription.
+   */
+  ALWAYS = "always",
+  /**
+   * Will automatically present the composition or trim tool if needed.
+   *
+   * Will only present:
+   * - the composition tool, if your initial composition is longer than `trim.maximumDuration` or shorter than `trim.minimumDuration`, or
+   * - the trim tool, if your initial video is longer than `trim.maximumDuration`. If the video is shorter than `trim.minimumDuration` an alert
+   *   is displayed as soon as the editor is opened and after dismissing the alert, the editor is closed.
+   *
+   * The composition tool will only be used if it is included in your subscription and if it is included in `tools`
+   * or if both the composition and trim tool are not included in `tools`.
+   * Otherwise, the trim tool is used if it is included in your subscription.
+   */
+  IF_NEEDED = "ifneeded",
+  /**
+   * Will automatically trim the video to `trim.maximumDuration` without opening any tool.
+   * If the length of the initially loaded video(s) is shorter than `trim.minimumDuration` and the user has the option to add more videos (because of composition),
+   * an alert will be shown when tapping the export button and after dismissing the alert, the composition tool will automatically open.
+   * If no additional videos can be added, an alert is displayed as soon as the editor is opened and after dismissing the alert, the editor is closed.
+   */
+  SILENT = "silent",
 }
 
 /** A tint mode. */

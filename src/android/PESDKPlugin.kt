@@ -14,11 +14,9 @@ import ly.img.android.pesdk.PhotoEditorSettingsList
 import ly.img.android.pesdk.backend.model.EditorSDKResult
 import ly.img.android.pesdk.backend.model.state.LoadSettings
 import ly.img.android.pesdk.backend.model.state.manager.SettingsList
-import ly.img.android.pesdk.backend.model.constant.OutputMode
 import ly.img.android.pesdk.backend.encoder.Encoder
 import ly.img.android.pesdk.kotlin_extension.continueWithExceptions
 import ly.img.android.pesdk.ui.activity.EditorBuilder
-import ly.img.android.pesdk.ui.activity.ImgLyIntent
 import ly.img.android.pesdk.utils.MainThreadRunnable
 import ly.img.android.pesdk.utils.SequenceRunnable
 import ly.img.android.pesdk.utils.UriHelper
@@ -31,14 +29,25 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
+/** PESDKPlugin */
 class PESDKPlugin : CordovaPlugin() {
+
+    companion object {
+        // This number must be unique. It is public to allow client code to change it if the same value is used elsewhere.
+        var EDITOR_RESULT_ID = 29064
+    }
+
+    /** The callback used for the plugin. */
     private var callback: CallbackContext? = null
 
+    /** The currently used settings list. */
     private var currentSettingsList: PhotoEditorSettingsList? = null
+
+    /** The currently used configuration. */
     private var currentConfig: Configuration? = null
 
     override fun onStart() {
-        IMGLY.initSDK(this.cordova.getActivity())
+        IMGLY.initSDK(this.cordova.activity)
         IMGLY.authorize()
     }
 
@@ -49,12 +58,11 @@ class PESDKPlugin : CordovaPlugin() {
             val filepath = options.optString("path", "")
             val configuration = options.optString("configuration", "{}")
             val serialization = options.optString("serialization", null)
-            val activity: Activity = this.cordova.getActivity()
 
             val gson = Gson()
-            var config: Map<String, Any> = gson.fromJson(configuration, object : TypeToken<Map<String, Any>>() {}.type)
+            val config: Map<String, Any> = gson.fromJson(configuration, object : TypeToken<Map<String, Any>>() {}.type)
 
-            present(activity, filepath, config, serialization, callbackContext)
+            present(filepath, config, serialization, callbackContext)
             true
         } else if (action == "unlockWithLicense") {
             val license = data[0].toString()
@@ -65,20 +73,29 @@ class PESDKPlugin : CordovaPlugin() {
         }
     }
 
+    /**
+     * Unlocks the SDK with a stringified license.
+     *
+     * @param license The license as a *String*.
+     */
     fun unlockWithLicense(license: String) {
-        val file_name = license
-        var json_string: String = ""
-        json_string = this.cordova.getActivity().assets.open(file_name).bufferedReader().use {
+        val jsonString = this.cordova.activity.assets.open(license).bufferedReader().use {
             it.readText()
         }
 
-        PESDK.initSDKWithLicenseData(json_string)
-
+        PESDK.initSDKWithLicenseData(jsonString)
         IMGLY.authorize()
     }
 
+    /**
+     * Configures and presents the editor.
+     *
+     * @param filepath The image source as *String* which should be loaded into the editor.
+     * @param config The *Configuration* to configure the editor with as if any.
+     * @param serialization The serialization to load into the editor if any.
+     * @param callbackContext The *CallbackContext* used to communicate with the plugin.
+     */
     private fun present(
-        mainActivity: Activity?,
         filepath: String?,
         config: Map<String, Any>,
         serialization: String?,
@@ -108,40 +125,29 @@ class PESDKPlugin : CordovaPlugin() {
             }
         }
 
-        val currentActivity = mainActivity ?: throw RuntimeException("Can't start the Editor because there is no current activity")
-
         readSerialisation(settingsList, serialization, filepath == null)
+        startEditor(settingsList)
+    }
 
-        val self = this
-
-        cordova.setActivityResultCallback(self)
-
+    /**
+     * Starts the editor.
+     * @param settingsList The *PhotoEditorSettingsList* used to configure the editor.
+     */
+    private fun startEditor(settingsList: PhotoEditorSettingsList) {
+        val currentActivity = cordova.activity ?: throw RuntimeException("Can't start the Editor because there is no current activity")
+        cordova.setActivityResultCallback(this)
         MainThreadRunnable {
             EditorBuilder(currentActivity)
-              .setSettingsList(settingsList)
-              .startActivityForResult(currentActivity, EDITOR_RESULT_ID, arrayOfNulls(0))
+                .setSettingsList(settingsList)
+                .startActivityForResult(currentActivity, EDITOR_RESULT_ID, arrayOfNulls(0))
         }()
     }
 
-    override fun onRestoreStateForActivityResult(state: Bundle?, callbackContext: CallbackContext) {
-        this.callback = callbackContext
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
-        if (requestCode == EDITOR_RESULT_ID) {
-            when (resultCode) {
-                Activity.RESULT_OK -> success(data)
-                Activity.RESULT_CANCELED -> {
-                    val nullValue: String? = null
-                    callback?.success(nullValue) // return null
-                }
-                else -> callback?.error("Media error (code $resultCode)")
-            }
-        }
-    }
-
+    /**
+     * Called when the editor has succeeded exporting the image.
+     * @param intent The *Intent?*.
+     */
     private fun success(intent: Intent?) {
-
         val data = try {
             intent?.let { EditorSDKResult(it) }
         } catch (e: EditorSDKResult.NotAnImglyResultException) {
@@ -167,7 +173,7 @@ class PESDKPlugin : CordovaPlugin() {
                                     Uri.parse(it)
                                 } ?: Uri.fromFile(File.createTempFile("serialization", ".json"))
                                 Encoder.createOutputStream(uri).use { outputStream -> 
-                                    IMGLYFileWriter(settingsList).writeJson(outputStream);
+                                    IMGLYFileWriter(settingsList).writeJson(outputStream)
                                 }
                                 uri.toString()
                             }
@@ -183,12 +189,17 @@ class PESDKPlugin : CordovaPlugin() {
             } else {
                 null
             }
-            var result = createResult(resultPath, sourcePath?.path != resultPath?.path, serialization)
+            val result = createResult(resultPath, sourcePath?.path != resultPath?.path, serialization)
             callback?.success(result)
 
         }()
     }
 
+    /**
+     * Reads the serialization to restore a previous state in the editor.
+     * @param settingsList The *SettingsList*.
+     * @param serialization The serialization which holds the previous state.
+     */
     private fun readSerialisation(settingsList: SettingsList, serialization: String?, readImage: Boolean) {
         if (serialization != null) {
             skipIfNotExists {
@@ -199,6 +210,13 @@ class PESDKPlugin : CordovaPlugin() {
         }
     }
 
+    /**
+     * Converts the editor result into a readable *JSONObject*.
+     * @param image The output source of the image.
+     * @param hasChanges Whether any export operations have been applied to the image.
+     * @param serialization The serialization which stores the current state.
+     * @return The converted *JSONObject*.
+     */
     private fun createResult(image: Uri?, hasChanges: Boolean, serialization: Any?): JSONObject {
         val result = JSONObject()
         result.put("image", image)
@@ -207,8 +225,20 @@ class PESDKPlugin : CordovaPlugin() {
         return result
     }
 
-    companion object {
-        // This number must be unique. It is public to allow client code to change it if the same value is used elsewhere.
-        var EDITOR_RESULT_ID = 29064
+    override fun onRestoreStateForActivityResult(state: Bundle?, callbackContext: CallbackContext) {
+        this.callback = callbackContext
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        if (requestCode == EDITOR_RESULT_ID) {
+            when (resultCode) {
+                Activity.RESULT_OK -> success(data)
+                Activity.RESULT_CANCELED -> {
+                    val nullValue: String? = null
+                    callback?.success(nullValue) // return null
+                }
+                else -> callback?.error("Media error (code $resultCode)")
+            }
+        }
     }
 }

@@ -22,10 +22,23 @@ cordova plugin add cordova-plugin-photoeditorsdk
 
 ### Android
 
-**Configuration for Android:**
-Configure PhotoEditor SDK for Android by opening `imglyConfig.gradle`, you can comment out the modules you don't need to save size.
+From version `3.0.0` the plugin uses AndroidX. To enable AndroidX in your application please adjust your `config.xml`:
 
-Because PhotoEditor SDK for Android is quite large, there is a high chance that you will need to enable [Multidex](https://developer.android.com/studio/build/multidex) for your project as follows:
+```diff
+<platform name="android">
+...
++    <preference name="AndroidXEnabled" value="true" />
+...
+</platform>
+```
+
+If your application is using legacy Android Support Libraries you can use the [`cordova-plugin-androidx-adapter`](https://www.npmjs.com/package/cordova-plugin-androidx-adapter) which will migrate the legacy libraries to work with AndroidX.
+
+#### Module Configuration
+
+You can configure the modules used for the PhotoEditor SDK for Android by opening `imglyConfig.gradle` and removing / commenting out the modules you do not need. This will also reduce the size of your application.
+
+Because PhotoEditor SDK for Android with all its modules is quite large, there is a high chance that you will need to enable [Multidex](https://developer.android.com/studio/build/multidex) for your project as follows:
 
 ```sh
 cordova plugin add cordova-plugin-enable-multidex

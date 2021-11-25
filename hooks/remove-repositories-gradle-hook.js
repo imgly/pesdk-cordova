@@ -4,8 +4,8 @@ const async = require("async");
 
 module.exports = (context) => {
   "use strict";
-  const BLOCK_START = `        // REPOSITORIES ADDED BY IMGLY - BLOCK START`;
-  const BLOCK_END = `        // REPOSITORIES ADDED BY IMGLY - BLOCK END`;
+  const BLOCK_START = `// REPOSITORIES ADDED BY IMGLY - BLOCK START`;
+  const BLOCK_END = `// REPOSITORIES ADDED BY IMGLY - BLOCK END`;
 
   return new Promise((resolve, reject) => {
     const platformRoot = path.join(
@@ -13,11 +13,17 @@ module.exports = (context) => {
       "platforms/android"
     );
 
-    var gradleFiles = [path.join(platformRoot, "build.gradle")];
+    var gradleFiles = [path.join(platformRoot, "build.gradle"), path.join(platformRoot, "repositories.gradle")];
 
     async.each(
       gradleFiles,
       function (file, callback) {
+        // We need to check whether the file really exists, 
+        // else it will throw an error for Cordova Android < 9.1.0
+        // since the `repositories.gradle` file will not be found.
+        if (!fs.existsSync(file)) {
+          return;
+        }
         let fileContents = fs.readFileSync(file, "utf8");
 
         let found = fileContents.indexOf(
