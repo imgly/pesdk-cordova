@@ -34,6 +34,18 @@ From version `3.0.0` the plugin uses AndroidX. To enable AndroidX in your applic
 
 If your application is using legacy Android Support Libraries you can use the [`cordova-plugin-androidx-adapter`](https://www.npmjs.com/package/cordova-plugin-androidx-adapter) which will migrate the legacy libraries to work with AndroidX.
 
+#### Kotlin Version
+
+If you are using `cordova-android` version `10.0+`, you might need to adjust the Kotlin version of your application in your `config.xml`, if your current Kotlin version is not compatible with our plugin:
+
+```diff
+<platform name="android">
+...
++    <preference name="GradlePluginKotlinVersion" value="1.4.10" />
+...
+</platform>
+```
+
 #### Module Configuration
 
 You can configure the modules used for the PhotoEditor SDK for Android by opening `imglyConfig.gradle` and removing / commenting out the modules you do not need. This will also reduce the size of your application.

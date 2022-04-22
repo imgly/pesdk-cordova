@@ -32,13 +32,24 @@ module.exports = (context) => {
             fileContents.lastIndexOf(BLOCK_END) + BLOCK_END.length
           );
           fileContents = fileContents.replace(toRemove, "");
-          
-          
-          const regex = /VERSION CHANGED BY IMGLY - START - '([0-9]*).([0-9]*).([0-9]*)'/gm;
+
+          const regex =
+            /VERSION CHANGED BY IMGLY - START - '([0-9]*).([0-9]*).([0-9]*)'/gm;
           const versionMatch = regex.exec(fileContents);
-          const version = versionMatch[0].replace("VERSION CHANGED BY IMGLY - START - ", "");
-          const kotlinVersion = fileContents.substring(fileContents.indexOf(VERSION_BLOCK_START), fileContents.indexOf(VERSION_BLOCK_END) + VERSION_BLOCK_END.length);
-          fileContents = fileContents.replace(kotlinVersion, `ext.kotlin_version = ${version}`);
+          if (versionMatch != null) {
+            const version = versionMatch[0].replace(
+              "VERSION CHANGED BY IMGLY - START - ",
+              ""
+            );
+            const kotlinVersion = fileContents.substring(
+              fileContents.indexOf(VERSION_BLOCK_START),
+              fileContents.indexOf(VERSION_BLOCK_END) + VERSION_BLOCK_END.length
+            );
+            fileContents = fileContents.replace(
+              kotlinVersion,
+              `ext.kotlin_version = ${version}`
+            );
+          }
           fs.writeFileSync(file, fileContents, "utf8");
           console.log("remove imgly dependencies from " + file);
           callback();

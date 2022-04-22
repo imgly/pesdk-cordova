@@ -15,7 +15,7 @@ module.exports = (context) => {
     "\n" +
     BLOCK_START +
     `
-        classpath "ly.img.android.sdk:plugin:9.1.0"` +
+        classpath "ly.img.android.sdk:plugin:9.2.0"` +
     "\n" +
     BLOCK_END +
     "\n";
@@ -57,13 +57,15 @@ module.exports = (context) => {
 
             const regex = /ext.kotlin_version = '([0-9]*).([0-9]*).([0-9]*)'/gm;
             const versionMatch = regex.exec(fileContents);
-            const version = versionMatch[0].replace("ext.kotlin_version = ", "");
-            const newVersion = `${VERSION_BLOCK_START + version}\n    ext.kotlin_version = '${gradlePluginVersion}'\n    ${VERSION_BLOCK_END}`;
-            fileContents = fileContents.replace(regex, newVersion);
-            fs.writeFileSync(file, fileContents, "utf8");
+            
+            if (versionMatch != null) {
+              const version = versionMatch[0].replace("ext.kotlin_version = ", "");
+              const newVersion = `${VERSION_BLOCK_START + version}\n    ext.kotlin_version = '${gradlePluginVersion}'\n    ${VERSION_BLOCK_END}`;
+              fileContents = fileContents.replace(regex, newVersion);
+            }
+            fs.writeFileSync(file, fileContents);
             console.log("updated " + file + " to include imgly dependencies ");
           }
-
           callback();
         } else {
           callback();
