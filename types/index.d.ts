@@ -32,7 +32,7 @@ declare class PESDK {
      * image.
      */
     static openEditor(
-        success: (args: PhotoEditorResult) => void,
+        success: (args: PhotoEditorResult | null) => void,
         failure: (error: any) => void,
         image?: string,
         configuration?: Configuration,

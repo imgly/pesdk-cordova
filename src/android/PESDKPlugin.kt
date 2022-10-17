@@ -41,9 +41,6 @@ class PESDKPlugin : CordovaPlugin() {
     /** The callback used for the plugin. */
     private var callback: CallbackContext? = null
 
-    /** The currently used settings list. */
-    private var currentSettingsList: PhotoEditorSettingsList? = null
-
     /** The currently used configuration. */
     private var currentConfig: Configuration? = null
 
@@ -104,12 +101,10 @@ class PESDKPlugin : CordovaPlugin() {
     ) {
         callback = callbackContext
         IMGLY.authorize()
-        val settingsList = PhotoEditorSettingsList()
-
-        currentSettingsList = settingsList
-        currentConfig = ConfigLoader.readFrom(config).also {
-            it.applyOn(settingsList)
-        }
+        val configuration = ConfigLoader.readFrom(config)
+        val settingsList = PhotoEditorSettingsList(configuration.export?.serialization?.enabled == true)
+        configuration.applyOn(settingsList)
+        currentConfig = configuration
 
         settingsList.configure<LoadSettings> { loadSettings ->
             filepath?.also {
@@ -141,6 +136,7 @@ class PESDKPlugin : CordovaPlugin() {
             EditorBuilder(currentActivity)
                 .setSettingsList(settingsList)
                 .startActivityForResult(currentActivity, EDITOR_RESULT_ID, arrayOfNulls(0))
+            settingsList.release()
         }()
     }
 
@@ -160,9 +156,9 @@ class PESDKPlugin : CordovaPlugin() {
             val resultPath = data.resultUri
 
             val serializationConfig = currentConfig?.export?.serialization
-            val settingsList = data.settingsList
 
             val serialization: Any? = if (serializationConfig?.enabled == true) {
+                val settingsList = data.settingsList
                 skipIfNotExists {
                     settingsList.let { settingsList ->
                         if (serializationConfig.embedSourceImage == true) {
@@ -187,6 +183,7 @@ class PESDKPlugin : CordovaPlugin() {
                     Log.i("ImgLySdk", "You need to include 'backend:serializer' Module, to use serialisation!")
                     null
                 }
+                settingsList.release()
             } else {
                 null
             }

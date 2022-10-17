@@ -9,13 +9,13 @@ module.exports = (context) => {
   const BLOCK_END = `        // DEPENDENCIES ADDED BY IMGLY - BLOCK END`;
   const VERSION_BLOCK_START = "// VERSION CHANGED BY IMGLY - START - ";
   const VERSION_BLOCK_END = "// VERSION CHANGED BY IMGLY - END -";
-  const gradlePluginVersion = '1.4.10';
+  const gradlePluginVersion = '1.5.32';
 
   const imglyDependencies =
     "\n" +
     BLOCK_START +
     `
-        classpath "ly.img.android.sdk:plugin:9.2.0"` +
+        classpath "ly.img.android.sdk:plugin:10.1.1"` +
     "\n" +
     BLOCK_END +
     "\n";

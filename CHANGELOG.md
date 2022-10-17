@@ -1,3 +1,15 @@
+## [3.2.0]
+
+### Changed
+
+* 🚨 With this version you might need to create symlinks when using Android Gradle Plugin version `4.x`. Please refer to the new [known issues](https://github.com/imgly/pesdk-cordova#known-issues) section of the README for details.
+* 🚨 This version requires `minSdkVersion` `21` for Android. Please refer to the new "Supported Android versions" section in the [getting started](https://github.com/imgly/pesdk-cordova#android) section of the README for instructions on how to adjust it.
+* Raised minimum PhotoEditor SDK for Android version to 10.1.1. See the [changelog](https://github.com/imgly/pesdk-android-demo/blob/master/CHANGELOG.md) for more information.
+
+### Fixed
+
+* Fixed `PESDK.openEditor` `success` callback type declaration to return `PhotoEditorResult | null` instead of just `PhotoEditorResult`.
+
 ## [3.1.0]
 
 ### Changed
