@@ -1,7 +1,7 @@
 {
     "name": "cordova-plugin-photoeditorsdk",
     "description": "A Cordova plugin for PhotoEditor SDK. Integrate the photo editor into your own HTML5, iOS or Android app - in minutes!",
-    "version": "3.2.0",
+    "version": "3.3.0",
     "types": "./types/index.d.ts",
     "main": "www/photoeditorsdk.js",
     "scripts": {

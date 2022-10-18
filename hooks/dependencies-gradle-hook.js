@@ -10,12 +10,30 @@ module.exports = (context) => {
   const VERSION_BLOCK_START = "// VERSION CHANGED BY IMGLY - START - ";
   const VERSION_BLOCK_END = "// VERSION CHANGED BY IMGLY - END -";
   const gradlePluginVersion = '1.5.32';
+  var sdkVersion = "10.1.1";
+
+  try {
+    const configFilePath = path.join(
+      context.opts.projectRoot,
+      "imglyConfig.json"
+    );
+    const config = fs.readFileSync(configFilePath, "utf8");
+    if (config != null) {
+      const configJson = JSON.parse(config);
+      const configVersion = configJson.version;
+      if (configVersion != null) sdkVersion = configVersion;
+    }
+  } catch {
+    console.log(
+      "Warning: There is no imglyConfig.json file in your root directory. Consider adding it to customize the IMG.LY Android SDK integration."
+    );
+  }
 
   const imglyDependencies =
     "\n" +
     BLOCK_START +
     `
-        classpath "ly.img.android.sdk:plugin:10.1.1"` +
+        classpath "ly.img.android.sdk:plugin:${sdkVersion}"` +
     "\n" +
     BLOCK_END +
     "\n";
@@ -57,10 +75,15 @@ module.exports = (context) => {
 
             const regex = /ext.kotlin_version = '([0-9]*).([0-9]*).([0-9]*)'/gm;
             const versionMatch = regex.exec(fileContents);
-            
+
             if (versionMatch != null) {
-              const version = versionMatch[0].replace("ext.kotlin_version = ", "");
-              const newVersion = `${VERSION_BLOCK_START + version}\n    ext.kotlin_version = '${gradlePluginVersion}'\n    ${VERSION_BLOCK_END}`;
+              const version = versionMatch[0].replace(
+                "ext.kotlin_version = ",
+                ""
+              );
+              const newVersion = `${
+                VERSION_BLOCK_START + version
+              }\n    ext.kotlin_version = '${gradlePluginVersion}'\n    ${VERSION_BLOCK_END}`;
               fileContents = fileContents.replace(regex, newVersion);
             }
             fs.writeFileSync(file, fileContents);

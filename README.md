@@ -12,6 +12,7 @@
 </p>
 
 # Cordova & Ionic plugin for PhotoEditor SDK
+
 ## Getting started
 
 Add PhotoEditor SDK plugin to your project as follows:
@@ -25,6 +26,7 @@ cordova plugin add cordova-plugin-photoeditorsdk
 With version `3.2.0`, we recommend using `compileSdkVersion` not lower than `31` for Android. However, this might interfere with your application's Android Gradle Plugin version if this is set to `4.x`.
 
 If you don't use a newer Android Gradle Plugin version, you'll most likely encounter a build error similar to:
+
 ```
 FAILURE: Build failed with an exception.
 
@@ -37,11 +39,27 @@ Run with --stacktrace option to get the stack trace. Run with --info or --debug 
 
 * Get more help at https://help.gradle.org
 ```
+
 As a workaround you can create the following symlinks:
-  1. Inside `/Users/YOUR-USERNAME/Library/Android/sdk/build-tools/31.0.0/`: Create a `dx` symlink for the `d8` file with `ln -s d8 dx`.
-  2. From there, go to `./lib/` and create a `dx.jar` symlink for the `d8.jar` file with `ln -s d8.jar dx.jar`. 
+
+1. Inside `/Users/YOUR-USERNAME/Library/Android/sdk/build-tools/31.0.0/`: Create a `dx` symlink for the `d8` file with `ln -s d8 dx`.
+2. From there, go to `./lib/` and create a `dx.jar` symlink for the `d8.jar` file with `ln -s d8.jar dx.jar`.
 
 ### Android
+
+#### Version
+
+You can configure the native Android PhotoEditor SDK version used by creating a `imglyConfig.json` file and specifying a specific version:
+
+```json
+{
+  "version": "10.3.3"
+}
+```
+
+If no version / no configuration file is specified, the module will use the default minimum required version.
+
+#### AndroidX
 
 From version `3.0.0` the plugin uses AndroidX. To enable AndroidX in your application please adjust your `config.xml`:
 
@@ -81,7 +99,7 @@ With version `3.2.0` the plugin requires `minSdkVersion` `21` or higher. Dependi
 
 We further recommend you to update your `buildToolsVersion` to `31.0.0` as well as your `compileSdkVersion` to `31`. However, this is not mandatory. For further reference on how to update these variables, please refer to the official [Cordova documentation](https://cordova.apache.org/docs/en/11.x/guide/platforms/android/index.html#configuring-gradle).
 
-#### Module Configuration
+#### Modules
 
 You can configure the modules used for the PhotoEditor SDK for Android by opening `imglyConfig.gradle` and removing / commenting out the modules you do not need. This will also reduce the size of your application.
 
@@ -96,20 +114,23 @@ cordova plugin add cordova-plugin-enable-multidex
 Each platform requires a separate license file. Unlock PhotoEditor SDK with a single line of code for both platforms via platform-specific file extensions.
 
 Rename your license files:
+
 - Android license: `ANY_NAME.android`
 - iOS license: `ANY_NAME.ios`
 
 Pass the file path without the extension to the `unlockWithLicense` function to unlock both iOS and Android:
+
 ```js
-PESDK.unlockWithLicense('www/assets/ANY_NAME');
+PESDK.unlockWithLicense("www/assets/ANY_NAME");
 ```
 
 Open the editor with an image:
+
 ```js
 PESDK.openEditor(
   successCallback,
   failureCallback,
-  PESDK.resolveStaticResource('www/assets/image.jpg')
+  PESDK.resolveStaticResource("www/assets/image.jpg")
 );
 ```
 
