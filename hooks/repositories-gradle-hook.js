@@ -88,7 +88,7 @@ module.exports = (context) => {
         fileContents = fileContents + "\n" + BLOCK_START + "\n" + `allprojects {\n  repositories {\n    ${mavenRepository}\n  }\n}` + "\n" + BLOCK_END;
       }
       fs.writeFileSync(file, fileContents, "utf8");
-      console.log("Updated " + file + " to include img.ly repositories.");
+      console.log("Updated " + file + " to include IMG.LY repositories.");
       return;
     };
   });

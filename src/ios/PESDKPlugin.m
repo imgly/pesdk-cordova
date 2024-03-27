@@ -321,39 +321,26 @@ const struct CDV_IMGLY_Constants CDV_IMGLY = { .kErrorUnableToUnlock = @"E_UNABL
 #pragma mark - PESDKPhotoEditViewControllerDelegate
 
 // The PhotoEditViewController did save an image.
-- (void)photoEditViewController:(PESDKPhotoEditViewController *)photoEditViewController
-                   didSaveImage:(UIImage *)uiImage
-                    imageAsData:(NSData *)imageData {
-  PESDKPhotoEditViewControllerOptions *photoEditViewControllerOptions =
-    photoEditViewController.configuration.photoEditViewControllerOptions;
-
-  if (imageData.length == 0) {
-    // Export image without any changes to target format if possible.
-    switch (photoEditViewControllerOptions.outputImageFileFormat) {
-    case PESDKImageFileFormatPng:
-      imageData = UIImagePNGRepresentation(uiImage);
-      break;
-    case PESDKImageFileFormatJpeg:
-      imageData = UIImageJPEGRepresentation(uiImage, photoEditViewControllerOptions.compressionQuality);
-      break;
-    default:
-      break;
-    }
+- (void)photoEditViewControllerDidFinish:(PESDKPhotoEditViewController * _Nonnull)photoEditViewController result:(PESDKPhotoEditorResult * _Nonnull)result {
+  NSString *uti = result.output.uti;
+  if (uti == nil) {
+    CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Image could not be saved."];
+    [self closeControllerWithResult:result];
+    return;
   }
 
+  NSData *imageData = result.output.data;
   NSError *error = nil;
   NSString *image = nil;
   id serialization = nil;
 
   if (imageData.length != 0) {
-
     if ([self.exportType isEqualToString:CDV_IMGLY.kExportTypeFileURL]) {
       if ([imageData CDV_IMGLY_writeToURL:self.exportFile andCreateDirectoryIfNecessary:YES error:&error]) {
         image = self.exportFile.absoluteString;
       }
     } else if ([self.exportType isEqualToString:CDV_IMGLY.kExportTypeDataURL]) {
-      NSString *mediaType = CFBridgingRelease(
-        UTTypeCopyPreferredTagWithClass(photoEditViewControllerOptions.outputImageFileFormatUTI, kUTTagClassMIMEType));
+      NSString *mediaType = CFBridgingRelease(UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)uti, kUTTagClassMIMEType));
       image = [NSString stringWithFormat:@"data:%@;base64,%@", mediaType, [imageData base64EncodedStringWithOptions:0]];
     }
   }
@@ -375,7 +362,7 @@ const struct CDV_IMGLY_Constants CDV_IMGLY = { .kErrorUnableToUnlock = @"E_UNABL
     CDVPluginResult *resultAsync;
     NSDictionary *payload = [NSDictionary
       dictionaryWithObjectsAndKeys:(image != nil) ? image : [NSNull null], @"image",
-                                   @(photoEditViewController.hasChanges), @"hasChanges",
+                                   @(result.status == PESDKPhotoEditorStatusRenderedWithChanges), @"hasChanges",
                                    (serialization != nil) ? serialization : [NSNull null], @"serialization", nil];
     resultAsync = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:payload];
 
@@ -394,11 +381,12 @@ const struct CDV_IMGLY_Constants CDV_IMGLY = { .kErrorUnableToUnlock = @"E_UNABL
 }
 
 // The PhotoEditViewController could not create an image.
-- (void)photoEditViewControllerDidFailToGeneratePhoto:(PESDKPhotoEditViewController *)photoEditViewController {
+- (void)photoEditViewControllerDidFail:(PESDKPhotoEditViewController * _Nonnull)photoEditViewController error:(PESDKPhotoEditorError * _Nonnull)error {
   CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                               messageAsString:@"Unable to generate image."];
   [self closeControllerWithResult:result];
 }
+
 @end
 
 @implementation NSDictionary (CDV_IMGLY_Category)

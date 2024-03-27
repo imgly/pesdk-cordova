@@ -1,3 +1,12 @@
+## [3.4.0]
+
+### Changed
+
+* [Android] 🚨 With this version you will need to specify a suitable KSP depending on the Kotlin version you are using. Please visit our guide [here](https://github.com/imgly/pesdk-cordova/blob/master/README.md#ksp). 
+* [Android] Raised minimum PhotoEditor SDK for Android version to 10.9.0.
+* [iOS] 🚨 Bumped iOS deployment target to 13.0.
+* [iOS] Raised minimum PhotoEditor SDK for iOS version to 11.8.
+
 ## [3.3.0]
 
 ### Added

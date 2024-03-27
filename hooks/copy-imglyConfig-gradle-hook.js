@@ -8,10 +8,6 @@ module.exports = (context) => {
   return new Promise((resolve, reject) => {
     const BLOCK_START = `// imglyConfig ADDED BY IMGLY - BLOCK START`;
     const BLOCK_END = `// imglyConfig ADDED BY IMGLY - BLOCK END`;
-    const imglyConfigHeader = `
-apply plugin: 'ly.img.android.sdk'
-apply plugin: 'kotlin-android'
-`;
 
     // The content of the gradle file in the cordova app root
     const projectRoot = path.join(context.opts.projectRoot);
@@ -35,22 +31,13 @@ apply plugin: 'kotlin-android'
       gradleFiles,
       function (file, callback) {
         let fileContents = fs.readFileSync(file, "utf8");
-
-        let whereToAdd = fileContents.indexOf(
-          "// PLUGIN GRADLE EXTENSIONS START"
-        );
-
         fileContents =
-          fileContents.substr(0, whereToAdd) +
+          fileContents +
           BLOCK_START +
-          imglyConfigHeader +
           imglyConfig +
-          BLOCK_END +
-          "\n" +
-          fileContents.substr(whereToAdd);
+          BLOCK_END
         fs.writeFileSync(file, fileContents, "utf8");
         console.log("updated " + file + " to include imglyConfig");
-
         callback();
       },
       function (err) {

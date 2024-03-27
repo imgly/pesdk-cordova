@@ -59,6 +59,20 @@ You can configure the native Android PhotoEditor SDK version used by creating a 
 
 If no version / no configuration file is specified, the module will use the default minimum required version.
 
+#### KSP
+
+With version `3.2.0` of the PhotoEditor SDK for Cordova, the integration of the native Android PE.SDK has changed. The new minimum Android PE.SDK version is `10.9.0` which requires [Kotlin Symbol Processing (KSP)](https://github.com/google/ksp).
+The KSP version depends on the Kotlin version that you are using. In order to find the correct version, please visit the [official KSP release page](https://github.com/google/ksp/releases?page=1).
+In order to specify the KSP version, please add an entry to the `imglyConfig.json`:
+
+```json
+{
+  "kspVersion": "1.7.21-1.0.8"
+}
+```
+
+By default, version `1.7.21-1.0.8` is used which is suitable for Kotlin `1.7.21`.
+
 #### AndroidX
 
 From version `3.0.0` the plugin uses AndroidX. To enable AndroidX in your application please adjust your `config.xml`:
@@ -108,6 +122,10 @@ Because PhotoEditor SDK for Android with all its modules is quite large, there i
 ```sh
 cordova plugin add cordova-plugin-enable-multidex
 ```
+
+### iOS
+
+With version `3.4.0` the plugin requires a deployment target of 13.0+ for iOS. If needed, please update your deployment target inside the `config.xml` as described [here](https://cordova.apache.org/docs/en/latest/config_ref/index.html).
 
 ### Usage
 

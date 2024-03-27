@@ -1,7 +1,7 @@
 {
     "name": "cordova-plugin-photoeditorsdk",
     "description": "A Cordova plugin for PhotoEditor SDK. Integrate the photo editor into your own HTML5, iOS or Android app - in minutes!",
-    "version": "3.3.0",
+    "version": "3.4.0",
     "types": "./types/index.d.ts",
     "main": "www/photoeditorsdk.js",
     "scripts": {
@@ -37,7 +37,7 @@
     },
     "homepage": "https://www.photoeditorsdk.com",
     "author": {
-        "name": "img.ly GmbH",
+        "name": "IMG.LY GmbH",
         "email": "contact@img.ly"
     },
     "license": "BSD-3-Clause",
