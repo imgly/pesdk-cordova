@@ -10,7 +10,7 @@ module.exports = (context) => {
   const VERSION_BLOCK_START = "// VERSION CHANGED BY IMGLY - START - ";
   const VERSION_BLOCK_END = "// VERSION CHANGED BY IMGLY - END -";
   const gradlePluginVersion = '1.7.21';
-  var sdkVersion = "10.9.0";
+  var sdkVersion = "10.10.10";
   var kspVersion = "1.7.21-1.0.8";
 
   try {
