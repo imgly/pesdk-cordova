@@ -1,5 +1,22 @@
 ## [UNRELEASED]
 
+## [3.4.1]
+
+### Added
+*  Added Cordova-compatible framework smoke tests and CI guidance (Ionic, Framework7, Onsen UI, Quasar, Monaca).
+
+### Fixed
+
+* [Android] Cordova Gradle hooks now support Capacitor projects under android/.
+* [Android] Align KSP resolution with the Kotlin version used by Capacitor projects.
+* [Android] Respect Cordova config values for compile/target SDK settings during Gradle configuration.
+* [Android] Align Kotlin/KSP JVM target with Cordova Java compatibility settings.
+* [Android] Align Cordova Java/Kotlin compile targets to Java 11 for the 10.10.10 SDK line.
+
+### Changed
+
+* [Android] Raised minimum VideoEditor SDK Gradle plugin version to 10.10.10.
+
 ## [3.4.0]
 
 ### Changed
