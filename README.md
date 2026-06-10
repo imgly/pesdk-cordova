@@ -127,6 +127,17 @@ cordova plugin add cordova-plugin-enable-multidex
 
 With version `3.4.0` the plugin requires a deployment target of 13.0+ for iOS. If needed, please update your deployment target inside the `config.xml` as described [here](https://cordova.apache.org/docs/en/latest/config_ref/index.html).
 
+## Using Capacitor
+
+You can also use the Cordova plugin in Capacitor through Capacitor's Cordova compatibility layer.
+
+On iOS, Capacitor detects the Cordova plugin source files, but it does not automatically add the native VideoEditor SDK dependency. Before building, add the native SDK manually:
+
+- CocoaPods: add `pod 'VideoEditorSDK', '~> 11.8'` to `ios/App/Podfile`, then run `pod install`.
+- SwiftPM: add the matching VideoEditor SDK package in Xcode.
+
+This means the iOS Capacitor path is supported with explicit native dependency setup, not as a zero-config dedicated Capacitor plugin.
+
 ### Usage
 
 Each platform requires a separate license file. Unlock PhotoEditor SDK with a single line of code for both platforms via platform-specific file extensions.
